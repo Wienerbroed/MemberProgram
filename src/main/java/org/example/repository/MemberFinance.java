@@ -4,7 +4,10 @@ import org.example.filehandler.FileHandler;
 import org.example.model.Member;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -114,6 +117,21 @@ public class MemberFinance {
 
     }
 
+    private void writeMembersToFile(List<Member> members) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(fileHandler.getFilePath()))) {
+            for (Member member : members) {
+                writer.write(member.getName() + "," +
+                        member.getBirthDate() + "," +
+                        member.getGender() + "," +
+                        member.getJoinDate() + "," +
+                        member.getDateOfPayment());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private List<Member> readMembersFromFile() {
         List<Member> members = new ArrayList<>();
         try (BufferedReader reader = fileHandler.getBufferedReader()) {
@@ -135,6 +153,26 @@ public class MemberFinance {
             e.printStackTrace();
         }
         return members;
+    }
+
+    public void updatePaymentDate(String memberName){
+        List<Member> members = readMembersFromFile();
+        boolean memberFound = false;
+
+        for (Member member : members) {
+            if (member.getName().equalsIgnoreCase(memberName)) {
+                member.setDateOfPayment(LocalDateTime.now());
+                memberFound = true;
+                System.out.println("Updated member: " + member.getName());
+                break;
+            }
+        }
+        if (memberFound) {
+            writeMembersToFile(members);
+
+        }else {
+            System.out.println("Member not found");
+        }
     }
     
     private int calculateAge(LocalDate birthDate) {

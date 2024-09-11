@@ -2,6 +2,9 @@ package org.example.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Member {
     //Attributes
@@ -10,6 +13,8 @@ public class Member {
     private String gender;
     private LocalDateTime joinDate;
     private LocalDateTime dateOfPayment;
+
+    private Map<String, List<Double>> swimTimes = new HashMap<>();
 
     public Member(String name, LocalDate birthDate, String gender, LocalDateTime joinDate, LocalDateTime dateOfPayment) {
         this.name = name;
@@ -40,6 +45,10 @@ public class Member {
         return dateOfPayment;
     }
 
+    public Map<String, List<Double>> getSwimTimes() {
+        return swimTimes;
+    }
+
     //Setters
     public void setName(String name) {
         this.name = name;
@@ -59,6 +68,10 @@ public class Member {
 
     public void setDateOfPayment(LocalDateTime dateOfPayment) {
         this.dateOfPayment = dateOfPayment;
+    }
+
+    public void setSwimTimes(Map<String, List<Double>> swimTimes) {
+        this.swimTimes = swimTimes;
     }
 
 

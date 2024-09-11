@@ -58,4 +58,7 @@ public class FileHandler {
         return new BufferedReader(new FileReader(filePath));
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
 }

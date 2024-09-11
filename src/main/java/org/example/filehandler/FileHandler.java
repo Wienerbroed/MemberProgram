@@ -54,4 +54,8 @@ public class FileHandler {
         }
     }
 
+    public BufferedReader getBufferedReader() throws IOException {
+        return new BufferedReader(new FileReader(filePath));
+    }
+
 }

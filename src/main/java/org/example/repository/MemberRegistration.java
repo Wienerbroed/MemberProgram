@@ -3,14 +3,20 @@ package org.example.repository;
 import org.example.filehandler.FileHandler;
 import org.example.model.Member;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MemberRegistration {
     ArrayList<Member> memberList = new ArrayList<Member>();
     FileHandler fileHandler = new FileHandler("//src:members.csv");
 
-    //Svaing member to CSV file
+    //Saving member to CSV file
     private void saveMember(){
         for (Member member : memberList) {
             String[] data = {
@@ -56,5 +62,6 @@ public class MemberRegistration {
         saveMember();
 
     }
+
 
 }

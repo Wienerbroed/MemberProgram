@@ -7,12 +7,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MemberFinance {
     FileHandler fileHandler = new FileHandler("//src:members.csv");
+    private static final int youthMembershipCost = 1000;
+    private static final int membershipCost = 1500;
+    private static final int seniorMembershipCost = 1200;
 
     public List<String> paidMember(){
         List<String> results = new ArrayList<>();
@@ -30,15 +34,83 @@ public class MemberFinance {
 
     }
 
-    public void totalMemberIncome(){
+    public int totalMemberIncome(){
+        List<Member> members = readMembersFromFile();
+        int totalMemberIncome = 0;
+
+        for (Member member : members) {
+            int age = calculateAge(member.getBirthDate());
+            if (age < 18) {
+                totalMemberIncome += youthMembershipCost;
+            } else if (age >= 18 && age <= 60) {
+                totalMemberIncome += membershipCost;
+            } else if (age >= 60 && age <= 120) {
+                totalMemberIncome += seniorMembershipCost;
+            }
+        }
+        return totalMemberIncome;
 
     }
 
     public void totalMemberDebit(){
+        List<Member> members = readMembersFromFile();
+        int totalMemberDebit = 0;
+        List<String> unpaidMembers = new ArrayList<>();
+
+        for (Member member : members) {
+            LocalDateTime dateOfPayment = member.getDateOfPayment();
+            String status = (dateOfPayment != null && ChronoUnit.DAYS.between(dateOfPayment, LocalDateTime.now()) <= 365)
+            ? "Paid"
+                    : "Not Paid";
+            if (status.equals("Not Paid")){
+                int age = calculateAge(member.getBirthDate());
+                int debitAmount = 0;
+
+                if (age < 18) {
+                    debitAmount = 1000;
+                } else if (age >= 18 && age <= 60) {
+                    debitAmount = 1500;
+                } else if (age > 60) {
+                    debitAmount = 1200;
+                }
+
+                totalMemberDebit += debitAmount;
+
+                unpaidMembers.add(member.getName() + ": " + debitAmount + " - Not Paid");
+            }
+
+        }
 
     }
 
     public void MemberIncomeByPaid(){
+        List<Member> members = readMembersFromFile();
+        int totalMemberIncome = 0;
+        List<String> unpaidMembers = new ArrayList<>();
+
+        for (Member member : members) {
+            LocalDateTime dateOfPayment = member.getDateOfPayment();
+            String status = (dateOfPayment != null && ChronoUnit.DAYS.between(dateOfPayment, LocalDateTime.now()) <= 365)
+                    ? "Paid"
+                    : "Not Paid";
+            if (status.equals("Paid")){
+                int age = calculateAge(member.getBirthDate());
+                int debitAmount = 0;
+
+                if (age < 18) {
+                    debitAmount = 1000;
+                } else if (age >= 18 && age <= 60) {
+                    debitAmount = 1500;
+                } else if (age > 60) {
+                    debitAmount = 1200;
+                }
+
+                totalMemberIncome += debitAmount;
+
+                unpaidMembers.add(member.getName() + ": " + debitAmount + " - Paid");
+            }
+
+        }
 
     }
 
@@ -63,6 +135,13 @@ public class MemberFinance {
             e.printStackTrace();
         }
         return members;
+    }
+    
+    private int calculateAge(LocalDate birthDate) {
+        if (birthDate == null) {
+            return 0;
+        }
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
 }
